@@ -13,8 +13,8 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  comments: [{ body: String, date: Date, required: false }],
-  lastLogin: { type: Date, default: Date.now },
+  // comments: [{ body: String, date: Date, required: false }],
+  // lastLogin: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("User", userSchema);
