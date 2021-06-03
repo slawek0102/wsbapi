@@ -10,14 +10,13 @@ mongoose.connect(
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  },
-  (error) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log("Jest polaczenie");
-    }
   }
 );
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+  console.log("Polaczono z DB");
+});
 
 module.exports = app;
