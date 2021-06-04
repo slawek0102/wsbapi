@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 
 const Books = require("../models/books");
 
+// Get All Books
 router.get("/all", (req, res) => {
   Books.find().then((result) => {
     res.status(200).json({
@@ -12,6 +13,7 @@ router.get("/all", (req, res) => {
   });
 });
 
+// New Book
 router.post("/add", (req, res, next) => {
   const book = new Books({
     _id: new mongoose.Types.ObjectId(),
@@ -33,6 +35,18 @@ router.post("/add", (req, res, next) => {
     .catch((err) => {
       res.status(500).json({ message: err });
     });
+});
+
+// Delete Book
+router.delete("/:bookId", (req, res, next) => {
+  const id = req.params.bookId;
+  Books.findByIdAndDelete(id)
+    .then((result) => {
+      res.status(200).json({
+        message: `Usunieto ksiązkę o Id ${id} pod tytulem ${result.title}`,
+      });
+    })
+    .catch((err) => res.status(500).json({ message: "Internal Server Error" }));
 });
 
 module.exports = router;
