@@ -6,7 +6,7 @@ require("dotenv").config();
 const app = express();
 
 const usersRoutes = require("./api/routes/users");
-// const booksRoutes = require("./api/routes/books");
+const booksRoutes = require("./api/routes/books");
 
 mongoose.connect(
   `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster0.sn94c.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`,
@@ -27,6 +27,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use("/users", usersRoutes);
-// app.use("/books", booksRoutes);
+app.use("/books", booksRoutes);
 
 module.exports = app;

@@ -6,21 +6,21 @@ const bookSchema = new Schema({
   _id: mongoose.Types.ObjectId,
   title: {
     type: String,
-    require: true,
+    required: true,
     minLength: 5,
   },
   author: {
     firstName: {
       type: String,
-      require: true,
+      required: true,
     },
     lastName: {
       type: String,
-      require: true,
+      required: true,
     },
-    born: { type: Date, required: false },
-    info: String,
+    // born: { type: Date, required: false },
   },
+  subject: { type: String, required: false },
 });
 
 module.exports = mongoose.model("Book", bookSchema);
