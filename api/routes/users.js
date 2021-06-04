@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require('mongoose')
 
-
 const User = require('../models/users')
 
 router.get("/signup", (req, res, next) => {
@@ -17,7 +16,6 @@ router.get("/signup", (req, res, next) => {
 
   return res.status(200).json({wiadomosc: user})
 
-  next()
 
 
 });
