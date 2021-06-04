@@ -9,14 +9,15 @@ router.get("/signup", (req, res, next) => {
     _id: new mongoose.Types.ObjectId(),
     name: req.body.name,
     password: req.body.password,
-    comment: req.body.comment
+    comment: req.body.comment,
   });
 
-  user.save()
-      .then(()=>{
-        res.status(201).json({textMessage: "Utworzono użytkownia"})
-        res.status(500).json({textMessage: "Blad Servera"})
-      })
+  user
+    .save()
+    .then(() => {
+      res.status(201).json({ textMessage: `User ${req.body.name} zostal utworzony` });
+    })
+    .catch(() => res.status(500).json({ textMessage: "Blad Servera" }));
 });
 
 module.exports = router;
