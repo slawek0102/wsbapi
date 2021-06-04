@@ -39,14 +39,16 @@ router.post("/add", (req, res, next) => {
 
 // Delete Book
 router.delete("/:bookId", (req, res, next) => {
-  const id = req.params.bookId;
-  Books.findByIdAndDelete(id)
+
+  const {bookId} = req.params
+
+  Books.findByIdAndDelete(bookId)
     .then((result) => {
       res.status(200).json({
-        message: `Usunieto ksiązkę o Id ${id} pod tytulem ${result.title}`,
+        message: `Usunieto ksiązkę o Id ${bookId} pod tytulem ${result.title}`,
       });
     })
-    .catch((err) => res.status(500).json({ message: "Internal Server Error" }));
+    .catch((err) => res.status(500).json({ message: "Internal Server Error", error: err }));
 });
 
 module.exports = router;
