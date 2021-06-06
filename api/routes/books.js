@@ -6,7 +6,7 @@ const checkAuth = require("../middleware/check-auth");
 const Books = require("../models/books");
 
 // Get All Books
-router.get("/all", (req, res) => {
+router.get("/all", checkAuth,(req, res) => {
   Books.find().then((result) => {
     res.status(200).json({
       allBooks: result,
