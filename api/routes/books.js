@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 
+const checkAuth = require("../middleware/check-auth");
 const Books = require("../models/books");
 
 // Get All Books
@@ -38,7 +39,7 @@ router.post("/add", (req, res, next) => {
 });
 
 // Delete Book
-router.delete("/:bookId", (req, res, next) => {
+router.delete("/:bookId", checkAuth, (req, res, next) => {
   const { bookId } = req.params;
 
   Books.findByIdAndDelete(bookId)
@@ -53,7 +54,7 @@ router.delete("/:bookId", (req, res, next) => {
 });
 
 // Update book
-router.put("/:bookId", (req, res, next) => {
+router.put("/:bookId", checkAuth, (req, res, next) => {
   const { bookId } = req.params;
 
   Books.findByIdAndUpdate(bookId, {

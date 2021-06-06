@@ -2,16 +2,16 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/users");
 
-router.get("/signup", (req, res, next) => {
-
-    bcrypt.hash(req.body.password, 10).then((hash) => {
+router.post("/signup", (req, res, next) => {
+  bcrypt.hash(req.body.password, 10).then((hash) => {
     const user = new User({
       _id: new mongoose.Types.ObjectId(),
       name: req.body.name,
-      password: req.body.password,
+      password: hash,
       comment: req.body.comment,
     });
 
@@ -32,23 +32,24 @@ router.post("/login", (req, res, next) => {
     .then((user) => {
       if (!user) {
         return res.status(401).json({ wiadomosc: "brak authoryzacji" });
+      } else {
+        // weryfikacja hasla
+        bcrypt.compare(req.body.password, user.password).then((result) => {
+          if (!result) {
+            return res.status(401).json({ wiadomosc: "brak authoryzacji" });
+          }
+
+          // wygeneruj JSON WEB TOKEN
+
+          const token = jwt.sign(
+            { name: user.name, userId: user._id },
+            process.env.SECRET,
+            { expiresIn: "8h" }
+          );
+
+          res.status(200).json({ wiadomosc: "zalogowoano", token: token });
+        });
       }
-      // weryfikacja hasla
-      bcrypt.compare(req.body.password, user.password).then((result) => {
-        if (!result) {
-          return res.status(401).json({ wiadomosc: "brak authoryzacji" });
-        }
-
-        // wygeneruj JSON WEB TOKEN
-
-        const token = jwt.sign(
-          { name: user.name, userId: user._id },
-          process.env.SECRET,
-          { expiresIn: "8" }
-        );
-
-        res.status(2000).json({ wiadomosc: "zalogowoano", token: token });
-      });
     })
     .catch(() => res.status(500).json({ wiadomosc: "Błąd serwera" }));
 });
