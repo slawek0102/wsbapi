@@ -66,11 +66,44 @@ router.put("/:bookId", (req, res, next) => {
   })
     .then((result) => {
       res.status(200).json({
-        wiadomosc: `Ksiązka o nr ${bookId} zostala zmieniona`,
-        info: result,
+        message: `Ksiązka o nr ${bookId} zostala zmieniona`,
+        recordBeforeChange: result,
+        recordAfterChange: req.body,
       });
     })
     .catch((err) => res.status(500).json({ message: "Server Error" }));
+});
+
+// Display all books with a given subject
+// for example "Znajdz wszyskie ksiazki z tematyki/subject "Natura"
+router.get("/subject/:subject", (req, res, next) => {
+  const { subject } = req.params;
+
+  Books.find({ subject: subject })
+    .then((result) => {
+      res.status(200).json({
+        message: result,
+      });
+    })
+    .catch((err) => res.status(500).json({ message: "Server Error" }));
+});
+
+
+// Display books with a given authors Name. Provide with info with record found.
+router.get("/author/:lName", (req, res, next) => {
+
+  const { lName } = req.params;
+
+  Books.find({ "author.lastName": lName })
+      .then((result) => {
+
+        res.status(200).json({
+          message: result,
+          recordsFound: result.length.toString()
+
+        });
+      })
+      .catch((err) => res.status(500).json({ message: "Server Error" }));
 });
 
 module.exports = router;
