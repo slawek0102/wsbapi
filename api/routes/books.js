@@ -39,8 +39,7 @@ router.post("/add", (req, res, next) => {
 
 // Delete Book
 router.delete("/:bookId", (req, res, next) => {
-
-  const {bookId} = req.params
+  const { bookId } = req.params;
 
   Books.findByIdAndDelete(bookId)
     .then((result) => {
@@ -48,7 +47,30 @@ router.delete("/:bookId", (req, res, next) => {
         message: `Usunieto ksiązkę o Id ${bookId} pod tytulem ${result.title}`,
       });
     })
-    .catch((err) => res.status(500).json({ message: "Internal Server Error", error: err }));
+    .catch((err) =>
+      res.status(500).json({ message: "Internal Server Error", error: err })
+    );
+});
+
+// Update book
+router.put("/:bookId", (req, res, next) => {
+  const { bookId } = req.params;
+
+  Books.findByIdAndUpdate(bookId, {
+    title: req.body.title,
+    author: {
+      firstName: req.body.author.firstName,
+      lastName: req.body.author.lastName,
+    },
+    subject: req.body.subject,
+  })
+    .then((result) => {
+      res.status(200).json({
+        wiadomosc: `Ksiązka o nr ${bookId} zostala zmieniona`,
+        info: result,
+      });
+    })
+    .catch((err) => res.status(500).json({ message: "Server Error" }));
 });
 
 module.exports = router;
