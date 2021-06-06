@@ -1,25 +1,56 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const User = require("../models/users");
 
 router.get("/signup", (req, res, next) => {
-  const user = new User({
-    _id: new mongoose.Types.ObjectId(),
-    name: req.body.name,
-    password: req.body.password,
-    comment: req.body.comment,
-  });
 
-  user
-    .save()
-    .then(() => {
-      res.status(201).json({ textMessage: `User ${req.body.name} zostal utworzony` });
-    })
-    .catch(() => res.status(500).json({ textMessage: "Blad Servera" }));
+    bcrypt.hash(req.body.password, 10).then((hash) => {
+    const user = new User({
+      _id: new mongoose.Types.ObjectId(),
+      name: req.body.name,
+      password: req.body.password,
+      comment: req.body.comment,
+    });
+
+    user
+      .save()
+      .then(() => {
+        res
+          .status(201)
+          .json({ textMessage: `User ${req.body.name} zostal utworzony` });
+      })
+      .catch(() => res.status(500).json({ textMessage: "Blad Servera" }));
+  });
 });
 
+router.post("/login", (req, res, next) => {
+  // szukam Usera
+  User.findOne({ name: req.body.name })
+    .then((user) => {
+      if (!user) {
+        return res.status(401).json({ wiadomosc: "brak authoryzacji" });
+      }
+      // weryfikacja hasla
+      bcrypt.compare(req.body.password, user.password).then((result) => {
+        if (!result) {
+          return res.status(401).json({ wiadomosc: "brak authoryzacji" });
+        }
 
+        // wygeneruj JSON WEB TOKEN
+
+        const token = jwt.sign(
+          { name: user.name, userId: user._id },
+          process.env.SECRET,
+          { expiresIn: "8" }
+        );
+
+        res.status(2000).json({ wiadomosc: "zalogowoano", token: token });
+      });
+    })
+    .catch(() => res.status(500).json({ wiadomosc: "Błąd serwera" }));
+});
 
 module.exports = router;

@@ -88,22 +88,27 @@ router.get("/subject/:subject", (req, res, next) => {
     .catch((err) => res.status(500).json({ message: "Server Error" }));
 });
 
-
 // Display books with a given authors Name. Provide with info with record found.
+// Znajdz wszystkie ksązki z lastName "Kowalski"
 router.get("/author/:lName", (req, res, next) => {
-
   const { lName } = req.params;
 
   Books.find({ "author.lastName": lName })
-      .then((result) => {
-
+    .then((result) => {
+      if (!result.length) {
+        res.status(200).json({
+          message: `Nie znaleziono autora o nazwisku  ${lName}`,
+        });
+      }
+      // Jesli pominę else otrzymuję bląd " Cannot set headers after they are sent to the client". Dlatego kozystam z else ponizej
+      else {
         res.status(200).json({
           message: result,
-          recordsFound: result.length.toString()
-
+          recordsFound: result.length.toString(),
         });
-      })
-      .catch((err) => res.status(500).json({ message: "Server Error" }));
+      }
+    })
+    .catch((err) => res.status(500).json({ message: "Server Error" }));
 });
 
 module.exports = router;
